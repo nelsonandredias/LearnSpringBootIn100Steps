@@ -9,8 +9,8 @@ public class LoginService implements ValidateCredentials{
 	
 	public boolean validateUser(String userName, String userPassword) {
 		
-		//only valid credentials (userName = admin, userPassword = pass)
-		return userName.equalsIgnoreCase("admin") && userPassword.equalsIgnoreCase("pass");
+		//only valid credentials (userName = nelson, userPassword = pass)
+		return userName.equalsIgnoreCase("nelson") && userPassword.equalsIgnoreCase("pass");
 	}
 	
 

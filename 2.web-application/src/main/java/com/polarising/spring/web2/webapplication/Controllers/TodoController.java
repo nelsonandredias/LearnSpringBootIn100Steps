@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.polarising.spring.web2.webapplication.Interfaces.ValidateCredentials;
 import com.polarising.spring.web2.webapplication.Services.LoginService;
 import com.polarising.spring.web2.webapplication.Services.TodoService;
 
 @Controller
+@SessionAttributes("sessionName") // persist the value across multiple requests
 public class TodoController {
 
 	@Autowired
@@ -23,7 +25,11 @@ public class TodoController {
 	@RequestMapping(value="/list-todos", method = RequestMethod.GET)
 	public String showListTodosPage(ModelMap model) {
 		
-		model.put("mTodosList", todoService.retrieveTodos("Nelson"));
+		//access session model attributes
+		String sessionName = (String) model.get("sessionName");
+		
+		//use the session model name to retrieve todo list
+		model.put("mTodosList", todoService.retrieveTodos(sessionName));
 		return "list-todos";
 	}
 

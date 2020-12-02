@@ -7,11 +7,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.polarising.spring.web2.webapplication.Interfaces.ValidateCredentials;
 import com.polarising.spring.web2.webapplication.Services.LoginService;
 
+// session scope allow us to store values across multiple requests.
+// the scope of the request parameters is just that particular request. (they dont persist across multiple requests)
+// the scope of the model values is just that particular request. (they dont persist across multiple requests) 
+
+
+
+
 @Controller
+@SessionAttributes("sessionName") // persist the value across multiple requests
 public class LoginController {
 
 	@Autowired
@@ -28,6 +37,7 @@ public class LoginController {
 		return "login";
 	}
 	
+	// submit login form
 	@RequestMapping(value="/login", method = RequestMethod.POST)
 	public String showWelcomePage(@RequestParam String fName, @RequestParam String fPassword, ModelMap model) {
 		
@@ -40,7 +50,7 @@ public class LoginController {
 		}
 		
 		// Model is used to pass data from Controller to View (JSP)
-		model.put("mName", fName);
+		model.put("sessionName", fName);
 		return "welcome";
 	}
 	

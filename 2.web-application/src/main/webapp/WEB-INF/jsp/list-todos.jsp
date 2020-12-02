@@ -5,5 +5,7 @@
 <body>
 <p>Here are the list of your todo's:</p>
 ${mTodosList}
+
+<p>${sessionName} is logged in!!!</p>
 </body>
 </html>
