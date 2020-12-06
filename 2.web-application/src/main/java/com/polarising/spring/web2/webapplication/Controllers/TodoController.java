@@ -1,15 +1,19 @@
 package com.polarising.spring.web2.webapplication.Controllers;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.objenesis.instantiator.basic.NewInstanceInstantiator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +31,17 @@ public class TodoController {
 
 	@Autowired
 	private TodoService todoService;
+	
+	//create an unique date format everytime we use the Date.class
+	@InitBinder 
+	public void initBinder(WebDataBinder binder) {
+		
+		// Date - dd/MM/yyyy
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(
+				dateFormat, false));
+		
+	}
 	
 	
 	@RequestMapping(value="/list-todos", method = RequestMethod.GET)
@@ -59,7 +74,7 @@ public class TodoController {
 		//access session model attributes
 		String sessionName = (String) model.get("sessionName");
 				
-		todoService.addTodo(sessionName,todo.getDesc(), new Date(), false);
+		todoService.addTodo(sessionName,todo.getDesc(), todo.getTargetDate(), false);
 		
 		return "redirect:/list-todos";
 	}
