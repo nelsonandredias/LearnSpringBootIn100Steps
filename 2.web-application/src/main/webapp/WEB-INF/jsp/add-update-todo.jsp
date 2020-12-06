@@ -1,16 +1,24 @@
 <html>
 <head>
 <title>First Web Application</title>
+<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css"
+	rel="stylesheet">
 </head>
 <body>
-<p>Add Todo:</p>
+	<div class="container">
+		<form method="POST">
+			<fieldset class="form-group">
+				<label>Description</label>
+				<input name="fDescription" type="text" class="form-control" required="required"/> 
+			</fieldset>
+			<button type="submit" class="btn btn-success">Add</button>
+		</form>
 
-<form method="POST">
-	Description: <input name="fDescription" type="text"/>
-	<input type="submit"/>
-</form>
+		<p>${sessionName} is logged in!!!</p>
+	</div>
 
-<p>${sessionName} is logged in!!!</p>
 
+	<script src="webjars/jquery/1.9.1/jquery.min.js"></script>
+	<script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </body>
 </html>
