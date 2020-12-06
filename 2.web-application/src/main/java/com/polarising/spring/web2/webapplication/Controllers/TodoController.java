@@ -40,6 +40,8 @@ public class TodoController {
 		return "list-todos";
 	}
 	
+	// Add part - Start
+	
 	@RequestMapping(value="/add-todo", method = RequestMethod.GET)
 	public String showAddTodoPage(ModelMap model) {
 		//default todo present in the form and linked to the modelAttribute "todo" bean
@@ -49,8 +51,6 @@ public class TodoController {
 
 	@RequestMapping(value="/add-todo", method = RequestMethod.POST)
 	public String addTodo(@Valid Todo todo, BindingResult validationResult, ModelMap model) {
-		
-		System.out.println("bindingResult ----------------------->" + validationResult);
 		
 		if(validationResult.hasErrors()) {
 			return "add-update-todo";
@@ -64,6 +64,8 @@ public class TodoController {
 		return "redirect:/list-todos";
 	}
 	
+	// Add part - End
+	
 	@RequestMapping(value="/delete-todo", method = RequestMethod.GET)
 	public String deleteTodo(@RequestParam int id, ModelMap model) {
 		
@@ -71,4 +73,32 @@ public class TodoController {
 		
 		return "redirect:/list-todos";
 	}
+	
+	// Update part - Start
+	
+	@RequestMapping(value="/update-todo", method = RequestMethod.GET)
+	public String showUpdateTodoPage(@RequestParam int id, ModelMap model) {
+		
+		Todo todo = todoService.retrieveTodoById(id);
+		
+		//pass retrieved todo to the respective page to be updated
+		model.put("todo", todo);
+		return "add-update-todo";
+	}
+	
+	@RequestMapping(value="/update-todo", method = RequestMethod.POST)
+	public String updateTodo(@Valid Todo todo, BindingResult validationResult, ModelMap model) {
+		
+		todo.setUser((String) model.get("sessionName"));
+		
+		if(validationResult.hasErrors()) {
+			return "add-update-todo";
+		}
+		todoService.updateTodo(todo);
+		
+		return "redirect:/list-todos";
+	}
+	
+	// Update part - End
+	
 }
