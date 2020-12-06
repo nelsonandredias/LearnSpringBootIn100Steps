@@ -1,3 +1,4 @@
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <html>
 <head>
 <title>First Web Application</title>
@@ -6,13 +7,16 @@
 </head>
 <body>
 	<div class="container">
-		<form method="POST">
+		<form:form method="post" modelAttribute="todo">
 			<fieldset class="form-group">
-				<label>Description</label>
-				<input name="fDescription" type="text" class="form-control" required="required"/> 
+				<form:label path="desc">Description</form:label>
+				<form:input path="desc" type="text" class="form-control" required="required"/>
+				
+				<!-- show errors related with desc field -->
+				<form:errors path="desc" cssClass="text-warning"/>
 			</fieldset>
 			<button type="submit" class="btn btn-success">Add</button>
-		</form>
+		</form:form>
 
 		<p>${sessionName} is logged in!!!</p>
 	</div>

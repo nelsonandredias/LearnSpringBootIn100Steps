@@ -2,10 +2,14 @@ package com.polarising.spring.web2.webapplication.Controllers;
 
 import java.util.Date;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.objenesis.instantiator.basic.NewInstanceInstantiator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import com.polarising.spring.web2.webapplication.Interfaces.ValidateCredentials;
 import com.polarising.spring.web2.webapplication.Services.LoginService;
 import com.polarising.spring.web2.webapplication.Services.TodoService;
+import com.polarising.spring.web2.webapplication.models.Todo;
 
 @Controller
 @SessionAttributes("sessionName") // persist the value across multiple requests
@@ -37,17 +42,24 @@ public class TodoController {
 	
 	@RequestMapping(value="/add-todo", method = RequestMethod.GET)
 	public String showAddTodoPage(ModelMap model) {
-		
+		//default todo present in the form and linked to the modelAttribute "todo" bean
+		model.addAttribute("todo", new Todo(0, (String) model.get("sessionName"), "Default desc", new Date(), false));
 		return "add-update-todo";
 	}
 
 	@RequestMapping(value="/add-todo", method = RequestMethod.POST)
-	public String addTodo(@RequestParam String fDescription, ModelMap model) {
+	public String addTodo(@Valid Todo todo, BindingResult validationResult, ModelMap model) {
+		
+		System.out.println("bindingResult ----------------------->" + validationResult);
+		
+		if(validationResult.hasErrors()) {
+			return "add-update-todo";
+		}
 		
 		//access session model attributes
 		String sessionName = (String) model.get("sessionName");
 				
-		todoService.addTodo(sessionName,fDescription, new Date(), false);
+		todoService.addTodo(sessionName,todo.getDesc(), new Date(), false);
 		
 		return "redirect:/list-todos";
 	}
