@@ -1,6 +1,8 @@
 package com.polarising.spring.web2.webapplication.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +22,8 @@ import com.polarising.spring.web2.webapplication.Services.LoginService;
 
 
 @Controller
-@SessionAttributes("sessionName") // persist the value across multiple requests
-public class LoginController {
+public class WelcomeController {
 
-	@Autowired
-	private ValidateCredentials validateCredentials;
 	
 	@RequestMapping(value="/test", method = RequestMethod.GET)
 	@ResponseBody
@@ -32,13 +31,33 @@ public class LoginController {
 		return "this is a test message";
 	}
 	
-	@RequestMapping(value="/login", method = RequestMethod.GET)
-	public String showLoginPage() {
-		return "login";
+	@RequestMapping(value="/", method = RequestMethod.GET)
+	public String showWelcomePage(ModelMap model) {
+		
+		model.put("sessionName", getLoggedInUserName());
+		
+		return "welcome";
+	}
+	
+	
+	// get logged in username from spring security
+	private String getLoggedInUserName() {
+		
+		// get logged in user bean via principal details from spring security
+		Object principal = SecurityContextHolder
+							.getContext()
+								.getAuthentication()
+									.getPrincipal();
+		
+		if (principal instanceof UserDetails) {
+			return ((UserDetails)principal).getUsername();
+		}
+		
+		return principal.toString();
 	}
 	
 	// submit login form
-	@RequestMapping(value="/login", method = RequestMethod.POST)
+	/*@RequestMapping(value="/login", method = RequestMethod.POST)
 	public String showWelcomePage(@RequestParam String fName, @RequestParam String fPassword, ModelMap model) {
 		
 		boolean isValidUser = validateCredentials.validateUser(fName, fPassword);
@@ -52,7 +71,7 @@ public class LoginController {
 		// Model is used to pass data from Controller to View (JSP)
 		model.put("sessionName", fName);
 		return "welcome";
-	}
+	}*/
 	
 	@RequestMapping(value="/greetings", method = RequestMethod.GET)
 	public String greetingsMessage(@RequestParam String name, ModelMap model) {
