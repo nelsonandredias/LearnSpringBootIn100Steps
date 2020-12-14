@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -28,7 +29,7 @@ import com.polarising.spring.boot.model.Question;
 import com.polarising.spring.boot.services.SurveyService;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(SurveyController.class)
+@WebMvcTest(value = SurveyController.class)
 class SurveyControllerTest {
 
 	// will allow us to make calls to the service
@@ -39,7 +40,8 @@ class SurveyControllerTest {
 	// the class being tested)
 	@MockBean
 	private SurveyService surveyService;
-
+	
+	@WithMockUser(username = "user1", password = "secret1")
 	@Test
 	public void retrieveDetailsForQuestionTest() throws Exception {
 
@@ -67,6 +69,7 @@ class SurveyControllerTest {
 		JSONAssert.assertEquals(expected, actual, false);
 	}
 
+	@WithMockUser(username = "user1", password = "secret1")
 	@Test
 	public void retrieveSurveyQuestions() throws Exception {
 
@@ -91,6 +94,7 @@ class SurveyControllerTest {
 		JSONAssert.assertEquals(expected, actual, false);
 	}
 
+	@WithMockUser(username = "user1", password = "secret1")
 	@Test
 	public void createSurveyQuestion() throws Exception {
 

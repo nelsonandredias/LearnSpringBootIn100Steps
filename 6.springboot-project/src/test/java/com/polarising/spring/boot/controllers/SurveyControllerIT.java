@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.polarising.spring.boot.Application;
@@ -38,14 +40,17 @@ class SurveyControllerIT {
 
 	TestRestTemplate restTemplate = new TestRestTemplate();
 
-	HttpHeaders headers = new HttpHeaders();
+	static HttpHeaders headers = new HttpHeaders();
 
 	@BeforeAll
-	public void before() {
+	public static void before() {
 
+		//add basic authentication
+		headers.add("Authorization", createHttpHeadersWithBasicAuthentication("user1", "secret1"));
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
 	}
+
 
 	@Test
 	public void testRetrieveSurveyQuestionTest() throws JSONException {
@@ -55,8 +60,8 @@ class SurveyControllerIT {
 		ResponseEntity<String> response = restTemplate.exchange(
 				createUrl("/surveys/Survey1/questions/Question1"),
 				HttpMethod.GET, entity, String.class);
-
-		String expected = "{id:Question1,description:Largest Country in the World,correctAnswer:Russia}";
+		
+		String expected = "{\"id\":\"Question1\",\"description\":\"Largest Country in the World\",\"correctAnswer\":\"Russia\"}";
 
 		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
@@ -99,6 +104,20 @@ class SurveyControllerIT {
 
 	private String createUrl(String uri) {
 		return "http://localhost:" + port + uri;
+	}
+	
+	private static String createHttpHeadersWithBasicAuthentication(String userId, String password) {
+	
+		
+		//create the string "userId + ':' + password" and encode to base64
+		String auth = userId + ":" + password;
+		
+		byte[] encodedAuth = Base64.encode(auth.getBytes(Charset.forName("US-ASCII")));
+		
+		String headerValue = "Basic " + new String(encodedAuth);
+		
+		
+		return headerValue;
 	}
 
 }
