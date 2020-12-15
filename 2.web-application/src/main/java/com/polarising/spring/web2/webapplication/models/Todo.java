@@ -2,16 +2,25 @@ package com.polarising.spring.web2.webapplication.models;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.Size;
 
+@Entity
 public class Todo {
 
+	@Id
+	@GeneratedValue
 	private int id;
+	
 	private String user;
 	
 	@Size(min=10, message="Please enter at least 10 characters...")
 	private String desc;
+	
 	private Date targetDate;
+	
 	private boolean isDone;
 	
 	public Todo() {

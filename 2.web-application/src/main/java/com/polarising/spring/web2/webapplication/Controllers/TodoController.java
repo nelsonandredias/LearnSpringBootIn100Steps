@@ -26,12 +26,16 @@ import com.polarising.spring.web2.webapplication.Interfaces.ValidateCredentials;
 import com.polarising.spring.web2.webapplication.Services.LoginService;
 import com.polarising.spring.web2.webapplication.Services.TodoService;
 import com.polarising.spring.web2.webapplication.models.Todo;
+import com.polarising.spring.web2.webapplication.repositories.TodoRepository;
 
 @Controller
 public class TodoController {
 
+	//@Autowired
+	//private TodoService todoService;
+	
 	@Autowired
-	private TodoService todoService;
+	private TodoRepository todoRepository;
 
 	// create an unique date format everytime we use the Date.class
 	@InitBinder
@@ -50,7 +54,8 @@ public class TodoController {
 		String sessionName = getLoggedInUserName(model);
 
 		// use the session model name to retrieve todo list
-		model.put("mTodosList", todoService.retrieveTodos(sessionName));
+		//model.put("mTodosList", todoService.retrieveTodos(sessionName));
+		model.put("mTodosList", todoRepository.findByUser(sessionName));
 		return "list-todos";
 	}
 
@@ -86,7 +91,10 @@ public class TodoController {
 		// access session model attributes
 		String sessionName = getLoggedInUserName(model);
 
-		todoService.addTodo(sessionName, todo.getDesc(), todo.getTargetDate(), false);
+		todo.setUser(getLoggedInUserName(model));
+		todoRepository.save(todo);
+		
+		//todoService.addTodo(sessionName, todo.getDesc(), todo.getTargetDate(), false);
 
 		return "redirect:/list-todos";
 	}
@@ -96,11 +104,12 @@ public class TodoController {
 	@RequestMapping(value = "/delete-todo", method = RequestMethod.GET)
 	public String deleteTodo(@RequestParam int id, ModelMap model) {
 
-		if(id == 1) {
+		/*if(id == 1) {
 			throw new RuntimeException("Something went wrong");
-		}
+		}*/
 		
-		todoService.deleteTodo(id);
+		todoRepository.deleteById(id);
+		//todoService.deleteTodo(id);
 
 		return "redirect:/list-todos";
 	}
@@ -110,8 +119,9 @@ public class TodoController {
 	@RequestMapping(value = "/update-todo", method = RequestMethod.GET)
 	public String showUpdateTodoPage(@RequestParam int id, ModelMap model) {
 
-		Todo todo = todoService.retrieveTodoById(id);
-
+		//Todo todo = todoService.retrieveTodoById(id);
+		Todo todo = todoRepository.findById(id).get();
+		
 		// pass retrieved todo to the respective page to be updated
 		model.put("todo", todo);
 		return "add-update-todo";
@@ -125,8 +135,10 @@ public class TodoController {
 		if (validationResult.hasErrors()) {
 			return "add-update-todo";
 		}
-		todoService.updateTodo(todo);
-
+		
+		//todoService.updateTodo(todo);
+		todoRepository.save(todo);
+		
 		return "redirect:/list-todos";
 	}
 
